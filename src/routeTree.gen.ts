@@ -20,6 +20,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedVoiceRouteImport } from './routes/_authenticated/voice'
 import { Route as AuthenticatedWebRouteImport } from './routes/_authenticated/web'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiMoviesRouteImport } from './routes/api/movies'
 import { Route as ApiProxyRouteImport } from './routes/api/proxy'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
@@ -84,6 +85,11 @@ const AuthenticatedWebRoute = AuthenticatedWebRouteImport.update({
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMoviesRoute = ApiMoviesRouteImport.update({
+  id: '/api/movies',
+  path: '/api/movies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProxyRoute = ApiProxyRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/voice': typeof AuthenticatedVoiceRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/movies': typeof ApiMoviesRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/voice': typeof AuthenticatedVoiceRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/movies': typeof ApiMoviesRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/_authenticated/voice': typeof AuthenticatedVoiceRoute
   '/_authenticated/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/movies': typeof ApiMoviesRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/voice'
     | '/web'
     | '/api/chat'
+    | '/api/movies'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/voice'
     | '/web'
     | '/api/chat'
+    | '/api/movies'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/_authenticated/voice'
     | '/_authenticated/web'
     | '/api/chat'
+    | '/api/movies'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiMoviesRoute: typeof ApiMoviesRoute
   ApiProxyRoute: typeof ApiProxyRoute
   ApiSpeechRoute: typeof ApiSpeechRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
@@ -380,6 +393,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/movies': {
+      id: '/api/movies'
+      path: '/api/movies'
+      fullPath: '/api/movies'
+      preLoaderRoute: typeof ApiMoviesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/proxy': {
@@ -506,6 +526,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiMoviesRoute: ApiMoviesRoute,
   ApiProxyRoute: ApiProxyRoute,
   ApiSpeechRoute: ApiSpeechRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
