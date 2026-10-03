@@ -4,7 +4,7 @@
  */
 import { evaluate } from "mathjs";
 
-export type BrainInput = { text: string; memories: string[]; name?: string | null; now?: Date };
+export type BrainInput = { text: string; memories: string[]; name?: string | null | undefined; now?: Date };
 export type BrainOutput = { reply: string; remember?: string; forgetAll?: boolean };
 
 const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)]!;
