@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
+import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, stepCountIs, streamText, type UIMessage } from "ai";
+import { think } from "@/lib/astra/mini-brain";
 import { buildTools } from "@/lib/astra/tools.server";
 import { z } from "zod";
 import type { Database, Json } from "@/integrations/supabase/types";
