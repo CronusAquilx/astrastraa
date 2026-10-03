@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
+import { convertToModelMessages, createUIMessageStream, createUIMessageStreamResponse, stepCountIs, streamText, type UIMessage } from "ai";
+import { think } from "@/lib/astra/mini-brain";
 import { buildTools } from "@/lib/astra/tools.server";
 import { z } from "zod";
 import type { Database, Json } from "@/integrations/supabase/types";
@@ -78,8 +79,9 @@ export const Route = createFileRoute("/api/chat")({
           const { data: pk } = await supabaseAdmin.from("provider_keys").select("base_url, api_key").eq("id", cfg.providerKeyId).maybeSingle();
           if (pk) override = { baseUrl: pk.base_url, ...(pk.api_key ? { apiKey: pk.api_key } : {}) };
         }
-        const resolved = resolveProvider(model, override);
-        if (!resolved.ok) return json(503, { error: `${model.display_name} isn't connected: ${resolved.reason}` });
+        const builtin = model.provider === "builtin";
+        const resolved = builtin ? null : resolveProvider(model, override);
+        if (resolved && !resolved.ok) return json(503, { error: `${model.display_name} isn't connected: ${resolved.reason}` });
 
         const { data: level } = await supabase.from("reasoning_levels").select("*").eq("id", reasoning).maybeSingle();
 
@@ -91,7 +93,7 @@ export const Route = createFileRoute("/api/chat")({
           .eq("user_id", userId)
           .gte("created_at", since.toISOString());
         const used = (todays ?? []).reduce((a, r) => a + Number(r.units), 0);
-        if (!isAdmin && used >= DAILY_UNIT_LIMIT) return json(429, { error: "You've reached today's usage limit. It resets at midnight UTC." });
+        if (!builtin && !isAdmin && used >= DAILY_UNIT_LIMIT) return json(429, { error: "You've reached today's usage limit. It resets at midnight UTC." });
 
         const { error: insertErr } = await supabase.from("messages").insert({
           thread_id: threadId,
@@ -121,6 +123,43 @@ export const Route = createFileRoute("/api/chat")({
           parts: (r.parts as UIMessage["parts"]) ?? [],
         }));
 
+        if (thread.title === "New chat") {
+          const title = textOf(message.parts).replace(/\s+/g, " ").trim().slice(0, 60) || "New chat";
+          await supabase.from("threads").update({ title, updated_at: new Date().toISOString() }).eq("id", threadId);
+          thread.title = title;
+        }
+
+        if (builtin) {
+          const { data: profile } = await supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle();
+          const out = think({ text: textOf(message.parts), memories: (memories ?? []).map((m) => m.content), name: profile?.display_name });
+          if (out.remember) await supabase.from("memories").insert({ user_id: userId, content: out.remember });
+          if (out.forgetAll) await supabase.from("memories").delete().eq("user_id", userId);
+          const stream = createUIMessageStream({
+            originalMessages: history,
+            execute: async ({ writer }) => {
+              const id = crypto.randomUUID();
+              writer.write({ type: "text-start", id });
+              for (const chunk of out.reply.match(/\S+\s*/g) ?? [out.reply]) {
+                writer.write({ type: "text-delta", id, delta: chunk });
+                await new Promise((r) => setTimeout(r, 15));
+              }
+              writer.write({ type: "text-end", id });
+            },
+            onFinish: async ({ responseMessage }) => {
+              await supabase.from("messages").insert({
+                thread_id: threadId,
+                user_id: userId,
+                ui_id: responseMessage.id,
+                role: "assistant",
+                parts: responseMessage.parts as Json,
+              });
+              await supabase.from("threads").update({ updated_at: new Date().toISOString() }).eq("id", threadId);
+            },
+          });
+          return createUIMessageStreamResponse({ stream });
+        }
+        if (!resolved?.ok) return json(503, { error: "Model unavailable." });
+
         const memoryBlock = memories?.length
           ? `\n\nThings the user asked you to remember:\n${memories.map((m) => `- ${m.content}`).join("\n")}`
           : "";
@@ -136,10 +175,6 @@ export const Route = createFileRoute("/api/chat")({
 Answer in clear Markdown. Use code blocks with language tags for code. If you don't know something, say so plainly.
 You have tools. Use web_search for current events or facts you're unsure of, then cite sources as markdown links. Use url_fetch to read a page. Use calculator for arithmetic. Use remember when the user shares a lasting preference or fact. When asked to build a website, page, demo, or visual, call html_preview with a complete single-file HTML document (inline CSS/JS) instead of pasting the code, then briefly describe it.${effort}${memoryBlock}`;
 
-        if (thread.title === "New chat") {
-          const title = textOf(message.parts).replace(/\s+/g, " ").trim().slice(0, 60) || "New chat";
-          await supabase.from("threads").update({ title }).eq("id", threadId);
-        }
 
         const result = streamText({
           model: resolved.model,
