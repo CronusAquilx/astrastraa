@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Download, Expand, Maximize2, Minimize2, RefreshCw, Settings2 } from "lucide-react";
-import { DOWNLOAD_PROVIDERS, SERVER_CATEGORIES, STREAMING_SERVERS, proxiedEmbed, type ServerCategory } from "@/lib/movies/tmdb";
+import { DOWNLOAD_PROVIDERS, SERVER_CATEGORIES, STREAMING_SERVERS, type ServerCategory } from "@/lib/movies/tmdb";
 import { useMovieDetail, useTVDetail } from "@/lib/movies/hooks";
 import { useWatchHistory } from "@/lib/movies/watch-history";
 import { cn } from "@/lib/utils";
@@ -91,7 +91,7 @@ function Watch() {
   const filteredServers = category === "all" ? STREAMING_SERVERS : STREAMING_SERVERS.filter((item) => item.category === category);
   const baseUrl = s.url(n, type, isTV ? season : undefined, isTV ? episode : undefined);
   const directUrl = `${baseUrl}${baseUrl.includes("?") ? "&" : "?"}autoplay=1${caption !== "off" ? `&sub_lang=${caption}` : ""}`;
-  const embedUrl = proxiedEmbed(directUrl);
+  const embedUrl = directUrl;
 
   const toggleFullscreen = useCallback(async () => {
     const player = playerRef.current;

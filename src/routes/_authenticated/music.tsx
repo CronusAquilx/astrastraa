@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic2, Pause, Play, Search, SkipBack, SkipForward } from "lucide-react";
 import { usePrefs } from "@/lib/astra/prefs";
 import { openProxied } from "@/lib/astra/proxy";
-import { relayToken } from "@/lib/movies/tmdb";
+import { supabase } from "@/integrations/supabase/client";
 import { MobileMenuButton } from "@/components/astra/AppShell";
 import { cn } from "@/lib/utils";
 
@@ -14,12 +14,18 @@ export const Route = createFileRoute("/_authenticated/music")({
 
 type Track = { id: string; title: string; artist: string; album: string; art: string };
 
+let TOKEN = "";
+async function token() {
+  const { data } = await supabase.auth.getSession();
+  TOKEN = data.session?.access_token ?? "";
+  return TOKEN;
+}
 async function api<T>(params: Record<string, string>): Promise<T> {
-  const res = await fetch(`/api/music?${new URLSearchParams(params)}`, { headers: { authorization: `Bearer ${relayToken()}` } });
+  const res = await fetch(`/api/music?${new URLSearchParams(params)}`, { headers: { authorization: `Bearer ${await token()}` } });
   if (!res.ok) throw new Error(`Music relay ${res.status}`);
   return res.json();
 }
-const artUrl = (src: string) => (src ? `/api/music?op=art&src=${encodeURIComponent(src)}&token=${encodeURIComponent(relayToken())}` : "");
+const artUrl = (src: string) => (src ? `/api/music?op=art&src=${encodeURIComponent(src)}&token=${encodeURIComponent(TOKEN)}` : "");
 
 function Music() {
   const prefs = usePrefs();

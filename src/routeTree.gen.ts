@@ -27,6 +27,7 @@ import { Route as ApiMusicRouteImport } from './routes/api/music'
 import { Route as ApiProxyRouteImport } from './routes/api/proxy'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
+import { Route as QfSplatRouteImport } from './routes/qf.$'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMoviesIndexRouteImport } from './routes/_authenticated/movies.index'
@@ -125,6 +126,11 @@ const ApiTranscribeRoute = ApiTranscribeRouteImport.update({
   path: '/api/transcribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QfSplatRoute = QfSplatRouteImport.update({
+  id: '/qf/$',
+  path: '/qf/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
   id: '/chat/',
   path: '/chat/',
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/qf/$': typeof QfSplatRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
   '/movies/': typeof AuthenticatedMoviesIndexRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/qf/$': typeof QfSplatRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/chat': typeof AuthenticatedChatIndexRoute
   '/movies': typeof AuthenticatedMoviesIndexRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
+  '/qf/$': typeof QfSplatRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/movies/': typeof AuthenticatedMoviesIndexRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
+    | '/qf/$'
     | '/chat/$threadId'
     | '/chat/'
     | '/movies/'
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
+    | '/qf/$'
     | '/chat/$threadId'
     | '/chat'
     | '/movies'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
+    | '/qf/$'
     | '/_authenticated/chat/$threadId'
     | '/_authenticated/chat/'
     | '/_authenticated/movies/'
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   ApiProxyRoute: typeof ApiProxyRoute
   ApiSpeechRoute: typeof ApiSpeechRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
+  QfSplatRoute: typeof QfSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -481,6 +494,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTranscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/qf/$': {
+      id: '/qf/$'
+      path: '/qf/$'
+      fullPath: '/qf/$'
+      preLoaderRoute: typeof QfSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/chat/': {
       id: '/_authenticated/chat/'
       path: '/chat'
@@ -593,6 +613,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProxyRoute: ApiProxyRoute,
   ApiSpeechRoute: ApiSpeechRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
+  QfSplatRoute: QfSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
