@@ -102,7 +102,6 @@ const RAIL = [
   { to: "/voice", label: "Voice", icon: AudioLines },
   { to: "/web", label: "Web", icon: Globe },
   { to: "/movies", label: "Movies", icon: Film },
-  { to: "/qaisflixx", label: "Qaisflixx", icon: Film },
   { to: "/music", label: "Music", icon: Music },
   { to: "/games", label: "Games", icon: Gamepad2 },
 ] as const;
@@ -204,7 +203,6 @@ function SidebarBody({ onNavigate, onSearch }: { onNavigate: () => void; onSearc
         <Link to="/voice" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><AudioLines className="size-4" /> Voice</Link>
         <Link to="/web" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Globe className="size-4" /> Web</Link>
         <Link to="/movies" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Film className="size-4" /> Movies</Link>
-        <Link to="/qaisflixx" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Film className="size-4" /> Qaisflixx</Link>
         <Link to="/music" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Music className="size-4" /> Music</Link>
         <Link to="/games" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Gamepad2 className="size-4" /> Games</Link>
       </div>

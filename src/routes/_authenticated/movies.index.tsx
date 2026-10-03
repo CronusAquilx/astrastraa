@@ -10,6 +10,33 @@ import MovieCard from "@/components/movies/MovieCard";
 import { useAnime, useKDrama, useNowPlaying, usePopular, useSearch, useTopRatedMovies, useTopRatedTV, useTrending } from "@/lib/movies/hooks";
 import { YOUTUBE_MOVIES } from "@/lib/movies/tmdb";
 import { useWatchlist } from "@/lib/movies/watchlist";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+/** Asks once per visit whether the user is at home or school; school locks the player to APIPlayer. */
+function WatchModePrompt() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => { if (!sessionStorage.getItem("astra-watch-mode-asked")) setOpen(true); }, []);
+  const pick = (mode: "home" | "school") => {
+    localStorage.setItem("astra-watch-mode", mode);
+    sessionStorage.setItem("astra-watch-mode-asked", "1");
+    setOpen(false);
+  };
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && pick((localStorage.getItem("astra-watch-mode") as "home" | "school") || "home")}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="font-display text-2xl">Where are you watching?</DialogTitle>
+          <DialogDescription>At school, Astra only uses the source that isn't blocked on school networks.</DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-2 gap-2">
+          <Button size="lg" variant="secondary" onClick={() => pick("home")}>At home</Button>
+          <Button size="lg" onClick={() => pick("school")}>At school</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 const RECENT_KEY = "astra-movie-searches";
 
@@ -54,6 +81,7 @@ function Movies() {
 
   return (
     <div className="h-full overflow-y-auto">
+      <WatchModePrompt />
       <header className="sticky top-0 z-20 grid h-16 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border bg-background/90 px-3 backdrop-blur sm:px-6">
         <MobileMenuButton />
         <div className="relative flex-1 max-w-md">
