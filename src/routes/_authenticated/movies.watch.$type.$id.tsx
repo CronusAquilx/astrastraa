@@ -24,7 +24,9 @@ function Watch() {
   const n = Number(id);
   const isTV = type === "tv";
   const playerRef = useRef<HTMLDivElement>(null);
-  const [server, setServer] = useState(() => localStorage.getItem("astra-movie-server") || STREAMING_SERVERS[0]?.id || "vidsrccc");
+  const [server, setServer] = useState(() => { const saved = localStorage.getItem("astra-movie-server"); return STREAMING_SERVERS.some((x) => x.id === saved) ? saved! : STREAMING_SERVERS[0]?.id ?? ""; });
+  const [loaded, setLoaded] = useState(false);
+  const triedRef = useRef<Set<string>>(new Set());
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
   const [theater, setTheater] = useState(false);
@@ -69,6 +71,19 @@ function Watch() {
     };
   }, [fakeFullscreen]);
 
+  useEffect(() => { triedRef.current = new Set(); }, [n, season, episode]);
+
+  // Auto-pick a new source when the current one doesn't load in time.
+  useEffect(() => { setLoaded(false); triedRef.current.add(server); }, [server, season, episode, n]);
+  useEffect(() => {
+    if (loaded) return;
+    const timer = setTimeout(() => {
+      const next = STREAMING_SERVERS.find((x) => !triedRef.current.has(x.id));
+      if (next) setServer(next.id);
+    }, 12000);
+    return () => clearTimeout(timer);
+  }, [server, season, episode, n, loaded]);
+
   const s = STREAMING_SERVERS.find((x) => x.id === server) ?? STREAMING_SERVERS[0];
   if (!s) return null;
   const seasons = tv.data?.seasons?.filter((x) => x.season_number > 0) ?? [];
@@ -107,7 +122,7 @@ function Watch() {
       </header>
       <div className={cn("mx-auto px-3 py-3 sm:px-5", theater ? "max-w-none" : "max-w-7xl")}>
         <div ref={playerRef} className={cn("relative overflow-hidden border border-border bg-card shadow-2xl", theater ? "h-[76dvh]" : "aspect-video", fakeFullscreen && "fixed inset-0 z-50 h-dvh w-screen border-0", fullscreen ? "h-screen w-screen border-0" : "rounded-md")}>
-          <iframe key={`${server}-${season}-${episode}-${caption}`} src={embedUrl} title={`${d?.title || d?.name || "Movie"} player`} className="size-full border-0" allowFullScreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" />
+          <iframe key={`${server}-${season}-${episode}-${caption}`} src={embedUrl} title={`${d?.title || d?.name || "Movie"} player`} onLoad={() => setLoaded(true)} onError={tryNextServer} className="size-full border-0" allowFullScreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" />
           {fakeFullscreen && <Button type="button" variant="secondary" size="icon" onClick={() => setFakeFullscreen(false)} aria-label="Exit fullscreen" className="absolute right-3 top-3 z-10 rounded-full"><Minimize2 /></Button>}
         </div>
         {!fullscreen && !fakeFullscreen && <>

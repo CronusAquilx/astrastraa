@@ -141,7 +141,6 @@ export const SERVER_CATEGORIES: { id: ServerCategory; name: string; description:
   { id: '4k', name: '💎 4K / HD', description: 'High quality streams' },
   { id: 'fast', name: '⚡ Fast', description: 'Quick load, low buffering' },
   { id: 'multi', name: '🎯 Multi-Source', description: 'Auto-failover providers' },
-  { id: 'backup', name: '🛡️ Backup', description: 'Older but reliable' },
 ];
 
 type StreamingServer = {
@@ -153,67 +152,32 @@ type StreamingServer = {
 
 export const STREAMING_SERVERS: StreamingServer[] = [
   // 🔥 NEW RELEASES — best for early releases / latest movies
-  { id: 'vidsrccc', name: 'VidSrc.cc', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}` : `https://vidsrc.cc/v2/embed/${type}/${id}` },
   { id: 'vidlink', name: 'VidLink Pro', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidlink.pro/tv/${id}/${s}/${e}` : `https://vidlink.pro/${type}/${id}` },
   { id: 'embedapi', name: 'Embed-API', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://embed-api.stream/embed/tv/${id}/${s}/${e}` : `https://embed-api.stream/embed/${type}/${id}` },
-  { id: 'nexstream', name: 'NexStream', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://api.codespecters.com/embed/tv/${id}/${s}/${e}` : `https://api.codespecters.com/embed/${type}/${id}` },
   { id: 'vidzee', name: 'VidZee', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://player.vidzee.wtf/embed/tv/${id}/${s}/${e}` : `https://player.vidzee.wtf/embed/${type}/${id}` },
-  { id: 'xprime', name: 'XPrime', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://xprime.tv/watch/${id}/${s}/${e}` : `https://xprime.tv/watch/${id}` },
 
   // 💎 4K / HD
-  { id: 'vidbinge', name: 'VidBinge 4K', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidbinge.dev/embed/tv/${id}/${s}/${e}` : `https://vidbinge.dev/embed/${type}/${id}` },
-  { id: 'rivestream', name: 'RiveStream HD', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://rivestream.xyz/embed?type=tv&id=${id}&season=${s}&episode=${e}` : `https://rivestream.xyz/embed?type=${type}&id=${id}` },
   { id: 'cinesrc', name: 'CineSrc HD', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://cinesrc.st/embed/tv/${id}/${s}/${e}` : `https://cinesrc.st/embed/${type}/${id}` },
-  { id: 'streamsrc', name: 'StreamSrc', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://streamsrc.cc/embed/tv/${id}/${s}/${e}` : `https://streamsrc.cc/embed/${type}/${id}` },
-  { id: 'moviee', name: 'Moviee HD', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://moviee.tv/embed/tv/${id}?s=${s}&e=${e}` : `https://moviee.tv/embed/${type}/${id}` },
 
   // ⚡ FAST
   { id: 'autoembed', name: 'AutoEmbed', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://autoembed.co/tv/tmdb/${id}-${s}-${e}` : `https://autoembed.co/${type}/tmdb/${id}` },
-  { id: 'embedsu', name: 'EmbedSu', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://embed.su/embed/tv/${id}/${s}/${e}` : `https://embed.su/embed/${type}/${id}` },
-  { id: 'smashy', name: 'SmashyStream', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://player.smashy.stream/tv/${id}?s=${s}&e=${e}` : `https://player.smashy.stream/${type}/${id}` },
   { id: 'apiplayer', name: 'APIPlayer', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://apiplayer.ru/embed/tv/${id}/${s}/${e}` : `https://apiplayer.ru/embed/${type}/${id}` },
-  { id: 'moviesapi', name: 'MoviesAPI', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://moviesapi.club/tv/${id}-${s}-${e}` : `https://moviesapi.club/${type}/${id}` },
 
   // 🎯 MULTI-SOURCE / FAILOVER
-  { id: 'ezvidapi', name: 'EzVidAPI', category: 'multi', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://ezvidapi.com/embed/tv/${id}/${s}/${e}` : `https://ezvidapi.com/embed/${type}/${id}` },
   { id: 'superembed', name: 'SuperEmbed', category: 'multi', url: (id, _type, s, e) => s && e ? `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}&tmdb=1` },
   { id: 'twoembed', name: '2Embed', category: 'multi', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` : `https://www.2embed.cc/embed/${id}` },
-  { id: 'nontongo', name: 'NontonGo', category: 'multi', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://www.nontongo.win/embed/tv/${id}/${s}/${e}` : `https://www.nontongo.win/embed/${type}/${id}` },
 
   // 🛡️ BACKUP (legacy / reliable)
-  { id: 'vidsrc', name: 'VidSrc.xyz', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.xyz/embed/tv/${id}/${s}/${e}` : `https://vidsrc.xyz/embed/${type}/${id}` },
-  { id: 'vidsrc2', name: 'VidSrc.to', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.to/embed/tv/${id}/${s}/${e}` : `https://vidsrc.to/embed/${type}/${id}` },
-  { id: 'vidsrcnl', name: 'VidSrc.nl', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://player.vidsrc.nl/embed/tv/${id}/${s}/${e}` : `https://player.vidsrc.nl/embed/${type}/${id}` },
-  { id: 'vidsrcicu', name: 'VidSrc.icu', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.icu/embed/tv/${id}/${s}/${e}` : `https://vidsrc.icu/embed/${type}/${id}` },
-  { id: 'frembed', name: 'Frembed', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://frembed.pro/api/tv/${id}/${s}/${e}` : `https://frembed.pro/api/${type}/${id}` },
-  { id: 'cinescrape', name: 'CineScrape', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://cinescrape.com/tv/${id}/${s}/${e}` : `https://cinescrape.com/${type}/${id}` },
 
   // 🔥 EXTRA NEW RELEASES (added — best for brand-new movies like Tuner, etc.)
   { id: 'vidsrcsu', name: 'VidSrc.su', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}` : `https://vidsrc.su/embed/${type}/${id}` },
-  { id: 'vidsrcvip', name: 'VidSrc.vip', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.vip/embed/tv/${id}/${s}/${e}` : `https://vidsrc.vip/embed/${type}/${id}` },
   { id: 'vidfast', name: 'VidFast', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidfast.pro/tv/${id}/${s}/${e}?autoPlay=true` : `https://vidfast.pro/movie/${id}?autoPlay=true` },
-  { id: 'vidora', name: 'Vidora', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidora.su/tv/${id}/${s}/${e}?autoplay=true` : `https://vidora.su/movie/${id}?autoplay=true` },
-  { id: 'vidjoy', name: 'VidJoy', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidjoy.pro/embed/tv/${id}/${s}/${e}` : `https://vidjoy.pro/embed/${type}/${id}` },
-  { id: 'spencer', name: 'Spencer Devs', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://spencerdevs.xyz/tv/${id}/${s}/${e}` : `https://spencerdevs.xyz/movie/${id}` },
-  { id: 'flicky', name: 'Flicky', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://flicky.host/embed/tv?id=${id}/${s}/${e}` : `https://flicky.host/embed/movie?id=${id}` },
-  { id: '111movies', name: '111Movies', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://111movies.com/tv/${id}/${s}/${e}` : `https://111movies.com/movie/${id}` },
-  { id: 'frembedfr', name: 'Frembed FR', category: 'new', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://frembed.icu/api/serie.php?id=${id}&sa=${s}&epi=${e}` : `https://frembed.icu/api/film.php?id=${id}` },
 
   // 💎 EXTRA 4K / HD
-  { id: 'embed2', name: 'Embed.dev', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://embed.dev/embed/tv/${id}/${s}/${e}` : `https://embed.dev/embed/${type}/${id}` },
-  { id: 'primebox', name: 'PrimeBox', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://primebox.xyz/embed/tv/${id}/${s}/${e}` : `https://primebox.xyz/embed/${type}/${id}` },
-  { id: 'iframevideo', name: 'IframeVideo', category: '4k', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://iframe.video/embed/tv/${id}/${s}/${e}` : `https://iframe.video/embed/${type}/${id}` },
 
   // ⚡ EXTRA FAST
-  { id: 'warezcdn', name: 'WarezCDN', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://warezcdn.link/embed/serie/${id}/${s}/${e}` : `https://warezcdn.link/embed/filme/${id}` },
-  { id: 'streamflix', name: 'StreamFlix', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://watch.streamflix.one/tv/${id}/watch?season=${s}&episode=${e}` : `https://watch.streamflix.one/movie/${id}/watch` },
-  { id: 'gomo', name: 'Gomo.to', category: 'fast', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://gomo.to/show/${id}/${s}/${e}` : `https://gomo.to/movie/${id}` },
 
   // 🛡️ EXTRA BACKUP
-  { id: 'vidsrcdev', name: 'VidSrc.dev', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.dev/embed/tv/${id}/${s}/${e}` : `https://vidsrc.dev/embed/${type}/${id}` },
-  { id: 'vidsrcrip', name: 'VidSrc.rip', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://vidsrc.rip/embed/tv/${id}/${s}/${e}` : `https://vidsrc.rip/embed/${type}/${id}` },
-  { id: 'twoembedorg', name: '2Embed.org', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://2embed.org/embed/tv/${id}/${s}/${e}` : `https://2embed.org/embed/${type}/${id}` },
-  { id: 'membed', name: 'MEmbed', category: 'backup', url: (id, type = 'movie', s, e) => type === 'tv' && s && e ? `https://membed.net/tv/${id}/${s}/${e}` : `https://membed.net/movie/${id}` },
 ];
 
 
