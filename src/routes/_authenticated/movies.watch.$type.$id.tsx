@@ -74,16 +74,14 @@ function Watch() {
   useEffect(() => { triedRef.current = new Set(); }, [n, season, episode]);
 
   // Auto-pick a new source when the current one doesn't load in time.
+  useEffect(() => { setLoaded(false); triedRef.current.add(server); }, [server, season, episode, n]);
   useEffect(() => {
-    setLoaded(false);
-    triedRef.current.add(server);
+    if (loaded) return;
     const timer = setTimeout(() => {
       const next = STREAMING_SERVERS.find((x) => !triedRef.current.has(x.id));
       if (next) setServer(next.id);
     }, 12000);
-    if (loaded) clearTimeout(timer);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server, season, episode, n, loaded]);
 
   const s = STREAMING_SERVERS.find((x) => x.id === server) ?? STREAMING_SERVERS[0];
