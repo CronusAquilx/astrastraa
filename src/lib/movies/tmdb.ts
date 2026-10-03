@@ -141,7 +141,6 @@ export const SERVER_CATEGORIES: { id: ServerCategory; name: string; description:
   { id: '4k', name: '💎 4K / HD', description: 'High quality streams' },
   { id: 'fast', name: '⚡ Fast', description: 'Quick load, low buffering' },
   { id: 'multi', name: '🎯 Multi-Source', description: 'Auto-failover providers' },
-  { id: 'backup', name: '🛡️ Backup', description: 'Older but reliable' },
 ];
 
 type StreamingServer = {
