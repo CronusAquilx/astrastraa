@@ -175,10 +175,6 @@ export const Route = createFileRoute("/api/chat")({
 Answer in clear Markdown. Use code blocks with language tags for code. If you don't know something, say so plainly.
 You have tools. Use web_search for current events or facts you're unsure of, then cite sources as markdown links. Use url_fetch to read a page. Use calculator for arithmetic. Use remember when the user shares a lasting preference or fact. When asked to build a website, page, demo, or visual, call html_preview with a complete single-file HTML document (inline CSS/JS) instead of pasting the code, then briefly describe it.${effort}${memoryBlock}`;
 
-        if (thread.title === "New chat") {
-          const title = textOf(message.parts).replace(/\s+/g, " ").trim().slice(0, 60) || "New chat";
-          await supabase.from("threads").update({ title }).eq("id", threadId);
-        }
 
         const result = streamText({
           model: resolved.model,
