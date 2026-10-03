@@ -24,7 +24,9 @@ function Watch() {
   const n = Number(id);
   const isTV = type === "tv";
   const playerRef = useRef<HTMLDivElement>(null);
-  const [server, setServer] = useState(() => { const saved = localStorage.getItem("astra-movie-server"); return STREAMING_SERVERS.some((x) => x.id === saved) ? saved! : STREAMING_SERVERS[0]?.id ?? ""; });
+  const [school] = useState(() => localStorage.getItem("astra-watch-mode") === "school");
+  const [server, setServerRaw] = useState(() => { if (localStorage.getItem("astra-watch-mode") === "school") return "apiplayer"; const saved = localStorage.getItem("astra-movie-server"); return STREAMING_SERVERS.some((x) => x.id === saved) ? saved! : STREAMING_SERVERS[0]?.id ?? ""; });
+  const setServer = (v: string) => { if (!school) setServerRaw(v); };
   const [loaded, setLoaded] = useState(false);
   const triedRef = useRef<Set<string>>(new Set());
   const [season, setSeason] = useState(1);
@@ -54,7 +56,7 @@ function Watch() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("astra-movie-server", server);
+    if (!school) localStorage.setItem("astra-movie-server", server);
     localStorage.setItem("astra-caption-language", caption);
     localStorage.setItem("astra-server-category", category);
   }, [server, caption, category]);
@@ -158,6 +160,7 @@ function Watch() {
             <Select value={String(episode)} onValueChange={(value) => setEpisode(Number(value))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Array.from({ length: epCount }, (_, index) => <SelectItem key={index + 1} value={String(index + 1)}>Episode {index + 1}</SelectItem>)}</SelectContent></Select>
           </div>}
 
+          {school ? <p className="mt-5 border-t border-border pt-4 pb-10 text-sm text-muted-foreground">School mode: playing on APIPlayer, the source that works on school networks. Switch to home mode by reopening the Movies tab.</p> :
           <section className="mt-5 border-t border-border pt-4 pb-10">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <div className="min-w-0"><h2 className="font-display text-2xl">Streaming server</h2><p className="truncate text-xs text-muted-foreground">Try another source if playback does not start.</p></div>
@@ -167,7 +170,7 @@ function Watch() {
               <Select value={category} onValueChange={(value) => setCategory(value as ServerCategory | "all")}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All categories</SelectItem>{SERVER_CATEGORIES.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}</SelectContent></Select>
               <Select value={server} onValueChange={setServer}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{filteredServers.map((item) => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}</SelectContent></Select>
             </div>
-          </section>
+          </section>}
         </>}
       </div>
     </div>
