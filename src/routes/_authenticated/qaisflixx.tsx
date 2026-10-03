@@ -1,11 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
-import { usePrefs } from "@/lib/astra/prefs";
-import { openProxied } from "@/lib/astra/proxy";
 import { MobileMenuButton } from "@/components/astra/AppShell";
 
-const SITE = "https://qaisflix.lovable.app/";
+const SITE = "/qf/";
 
 export const Route = createFileRoute("/_authenticated/qaisflixx")({
   head: () => ({ meta: [{ title: "Qaisflixx — Astra" }] }),
@@ -13,7 +11,6 @@ export const Route = createFileRoute("/_authenticated/qaisflixx")({
 });
 
 function Qaisflixx() {
-  const prefs = usePrefs();
   const ref = useRef<HTMLIFrameElement>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [err, setErr] = useState("");
@@ -22,11 +19,9 @@ function Qaisflixx() {
   useEffect(() => {
     if (!ref.current) return;
     setStatus("loading");
-    openProxied(ref.current, SITE, prefs)
-      .then(() => setStatus("ready"))
-      .catch((e) => { setErr(e instanceof Error ? e.message : String(e)); setStatus("error"); });
+    ref.current.src = `${SITE}?r=${n}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [n, prefs.transport, prefs.wisp]);
+  }, [n]);
 
   return (
     <div className="flex h-full flex-col">
@@ -42,7 +37,7 @@ function Qaisflixx() {
             {status === "loading" ? "Loading Qaisflixx…" : `Couldn't load: ${err}`}
           </div>
         )}
-        <iframe ref={ref} title="Qaisflixx" className="size-full border-0 bg-background" allow="autoplay; fullscreen; encrypted-media" allowFullScreen />
+        <iframe ref={ref} onLoad={() => setStatus("ready")} onError={() => { setErr("network error"); setStatus("error"); }} title="Qaisflixx" className="size-full border-0 bg-background" allow="autoplay; fullscreen; encrypted-media" allowFullScreen />
       </div>
     </div>
   );
