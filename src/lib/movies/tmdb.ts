@@ -1,23 +1,26 @@
-// Normalize key from env and keep a hard fallback so the app still works if env gets corrupted
-const DEFAULT_TMDB_API_KEY = '0ea74aa80d71c4dc484c0a58f26ea7b8';
+// All movie traffic (TMDB data, images, embed players) goes through Astra's
+// own relay at /api/movies, so the browser only talks to Astra's domain.
+const RELAY = '/api/movies';
 
-const normalizeApiKey = (value: string) =>
-  value
-    .normalize('NFKD')
-    .replace(/[^0-9a-f]/gi, '')
-    .toLowerCase();
-
-const envApiKey = normalizeApiKey(import.meta.env['VITE_TMDB_API_KEY'] || '');
-const fallbackApiKey = normalizeApiKey(DEFAULT_TMDB_API_KEY);
-const API_KEY = envApiKey.length >= 32 ? envApiKey.slice(0, 32) : fallbackApiKey;
-const BASE = 'https://api.themoviedb.org/3';
-const IMG = 'https://image.tmdb.org/t/p';
+/** Access token for relay auth, read straight from the stored session. */
+export const relayToken = (): string => {
+  try {
+    const raw = localStorage.getItem(`sb-${import.meta.env['VITE_SUPABASE_PROJECT_ID']}-auth-token`);
+    return raw ? (JSON.parse(raw)?.access_token ?? '') : '';
+  } catch {
+    return '';
+  }
+};
 
 export const img = (path: string | null, size = 'w500') =>
-  path ? `${IMG}/${size}${path}` : '/placeholder.svg';
+  path ? `${RELAY}?img=${encodeURIComponent(`/${size}${path}`)}&token=${encodeURIComponent(relayToken())}` : '/placeholder.svg';
 
 export const backdrop = (path: string | null) =>
-  path ? `${IMG}/original${path}` : '/placeholder.svg';
+  path ? `${RELAY}?img=${encodeURIComponent(`/original${path}`)}&token=${encodeURIComponent(relayToken())}` : '/placeholder.svg';
+
+/** Route a streaming-source embed page through the relay. */
+export const proxiedEmbed = (url: string) =>
+  `${RELAY}?embed=${encodeURIComponent(url)}&token=${encodeURIComponent(relayToken())}`;
 
 export interface TMDBMovie {
   id: number;
@@ -67,11 +70,10 @@ export interface TMDBPerson {
 }
 
 async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
-  if (!API_KEY) throw new Error('TMDB API key not configured');
-  const url = new URL(`${BASE}${endpoint}`);
-  url.searchParams.set('api_key', API_KEY);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  const res = await fetch(url.toString());
+  const query = new URLSearchParams({ tmdb: endpoint, ...params });
+  const res = await fetch(`${RELAY}?${query}`, {
+    headers: { Authorization: `Bearer ${relayToken()}` },
+  });
   if (!res.ok) throw new Error(`TMDB error: ${res.status}`);
   return res.json();
 }
