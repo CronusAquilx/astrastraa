@@ -16,11 +16,14 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated/games'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedMemoryRouteImport } from './routes/_authenticated/memory'
+import { Route as AuthenticatedMusicRouteImport } from './routes/_authenticated/music'
+import { Route as AuthenticatedQaisflixxRouteImport } from './routes/_authenticated/qaisflixx'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedVoiceRouteImport } from './routes/_authenticated/voice'
 import { Route as AuthenticatedWebRouteImport } from './routes/_authenticated/web'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiMoviesRouteImport } from './routes/api/movies'
+import { Route as ApiMusicRouteImport } from './routes/api/music'
 import { Route as ApiProxyRouteImport } from './routes/api/proxy'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
@@ -67,6 +70,16 @@ const AuthenticatedMemoryRoute = AuthenticatedMemoryRouteImport.update({
   path: '/memory',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMusicRoute = AuthenticatedMusicRouteImport.update({
+  id: '/music',
+  path: '/music',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQaisflixxRoute = AuthenticatedQaisflixxRouteImport.update({
+  id: '/qaisflixx',
+  path: '/qaisflixx',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -90,6 +103,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const ApiMoviesRoute = ApiMoviesRouteImport.update({
   id: '/api/movies',
   path: '/api/movies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMusicRoute = ApiMusicRouteImport.update({
+  id: '/api/music',
+  path: '/api/music',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProxyRoute = ApiProxyRouteImport.update({
@@ -162,11 +180,14 @@ export interface FileRoutesByFullPath {
   '/games': typeof AuthenticatedGamesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/memory': typeof AuthenticatedMemoryRoute
+  '/music': typeof AuthenticatedMusicRoute
+  '/qaisflixx': typeof AuthenticatedQaisflixxRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/voice': typeof AuthenticatedVoiceRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
   '/api/movies': typeof ApiMoviesRoute
+  '/api/music': typeof ApiMusicRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -186,11 +207,14 @@ export interface FileRoutesByTo {
   '/games': typeof AuthenticatedGamesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/memory': typeof AuthenticatedMemoryRoute
+  '/music': typeof AuthenticatedMusicRoute
+  '/qaisflixx': typeof AuthenticatedQaisflixxRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/voice': typeof AuthenticatedVoiceRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
   '/api/movies': typeof ApiMoviesRoute
+  '/api/music': typeof ApiMusicRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -212,11 +236,14 @@ export interface FileRoutesById {
   '/_authenticated/games': typeof AuthenticatedGamesRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/memory': typeof AuthenticatedMemoryRoute
+  '/_authenticated/music': typeof AuthenticatedMusicRoute
+  '/_authenticated/qaisflixx': typeof AuthenticatedQaisflixxRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/voice': typeof AuthenticatedVoiceRoute
   '/_authenticated/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
   '/api/movies': typeof ApiMoviesRoute
+  '/api/music': typeof ApiMusicRoute
   '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -238,11 +265,14 @@ export interface FileRouteTypes {
     | '/games'
     | '/home'
     | '/memory'
+    | '/music'
+    | '/qaisflixx'
     | '/settings'
     | '/voice'
     | '/web'
     | '/api/chat'
     | '/api/movies'
+    | '/api/music'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -262,11 +292,14 @@ export interface FileRouteTypes {
     | '/games'
     | '/home'
     | '/memory'
+    | '/music'
+    | '/qaisflixx'
     | '/settings'
     | '/voice'
     | '/web'
     | '/api/chat'
     | '/api/movies'
+    | '/api/music'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -287,11 +320,14 @@ export interface FileRouteTypes {
     | '/_authenticated/games'
     | '/_authenticated/home'
     | '/_authenticated/memory'
+    | '/_authenticated/music'
+    | '/_authenticated/qaisflixx'
     | '/_authenticated/settings'
     | '/_authenticated/voice'
     | '/_authenticated/web'
     | '/api/chat'
     | '/api/movies'
+    | '/api/music'
     | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
@@ -311,6 +347,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiMoviesRoute: typeof ApiMoviesRoute
+  ApiMusicRoute: typeof ApiMusicRoute
   ApiProxyRoute: typeof ApiProxyRoute
   ApiSpeechRoute: typeof ApiSpeechRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
@@ -367,6 +404,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMemoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/music': {
+      id: '/_authenticated/music'
+      path: '/music'
+      fullPath: '/music'
+      preLoaderRoute: typeof AuthenticatedMusicRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/qaisflixx': {
+      id: '/_authenticated/qaisflixx'
+      path: '/qaisflixx'
+      fullPath: '/qaisflixx'
+      preLoaderRoute: typeof AuthenticatedQaisflixxRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -400,6 +451,13 @@ declare module '@tanstack/react-router' {
       path: '/api/movies'
       fullPath: '/api/movies'
       preLoaderRoute: typeof ApiMoviesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/music': {
+      id: '/api/music'
+      path: '/api/music'
+      fullPath: '/api/music'
+      preLoaderRoute: typeof ApiMusicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/proxy': {
@@ -487,6 +545,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMemoryRoute: typeof AuthenticatedMemoryRoute
+  AuthenticatedMusicRoute: typeof AuthenticatedMusicRoute
+  AuthenticatedQaisflixxRoute: typeof AuthenticatedQaisflixxRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedVoiceRoute: typeof AuthenticatedVoiceRoute
   AuthenticatedWebRoute: typeof AuthenticatedWebRoute
@@ -505,6 +565,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGamesRoute: AuthenticatedGamesRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMemoryRoute: AuthenticatedMemoryRoute,
+  AuthenticatedMusicRoute: AuthenticatedMusicRoute,
+  AuthenticatedQaisflixxRoute: AuthenticatedQaisflixxRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedVoiceRoute: AuthenticatedVoiceRoute,
   AuthenticatedWebRoute: AuthenticatedWebRoute,
@@ -527,6 +589,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
   ApiMoviesRoute: ApiMoviesRoute,
+  ApiMusicRoute: ApiMusicRoute,
   ApiProxyRoute: ApiProxyRoute,
   ApiSpeechRoute: ApiSpeechRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
