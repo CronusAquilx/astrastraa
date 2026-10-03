@@ -34,7 +34,7 @@ export function resolveEndpoint(row: ModelRow) {
 const HOSTED_MODEL = "openai/gpt-6-astra";
 
 /** Built-in hosted fallback used only while no self-hosted server is configured. */
-function hostedFallback(): ResolvedProvider | null {
+export function hostedFallback(): ResolvedProvider | null {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) return null;
   const provider = createOpenAI({
@@ -65,10 +65,6 @@ export function resolveProvider(row: ModelRow, override?: { baseUrl: string; api
   const baseUrl = override?.baseUrl ?? env.baseUrl;
   const apiKey = override ? override.apiKey : env.apiKey;
   const modelName = env.modelName;
-  if (!baseUrl && row.provider === "local") {
-    const fb = hostedFallback();
-    if (fb) return fb;
-  }
   if (!baseUrl) return { ok: false, reason: "The model server address is not configured yet." };
   if (!modelName) return { ok: false, reason: "The model name is not configured yet." };
   const baseURL = normalizeBase(baseUrl);
@@ -82,9 +78,6 @@ export function resolveProvider(row: ModelRow, override?: { baseUrl: string; api
 
 export async function probeEndpoint(row: ModelRow) {
   const { baseUrl, apiKey, modelName } = resolveEndpoint(row);
-  if (!baseUrl && row.provider === "local" && process.env["LOVABLE_API_KEY"]) {
-    return { configured: true, reachable: true, modelName: "built-in hosted model", detail: "Using the built-in hosted model. Add your own server any time to go fully private" };
-  }
   if (!baseUrl || !modelName) {
     return { configured: false, reachable: false, modelName: modelName ?? null, detail: "Not configured" };
   }
