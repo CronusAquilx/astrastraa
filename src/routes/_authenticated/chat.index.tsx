@@ -18,7 +18,7 @@ function NewChat() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [modelId, setModelId] = useState("astra-mini");
+  const [modelId, setModelId] = useState("astra");
   const [reasoning, setReasoning] = useState("medium");
   const [busy, setBusy] = useState(false);
 
