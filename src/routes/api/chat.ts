@@ -5,7 +5,7 @@ import { think } from "@/lib/astra/mini-brain";
 import { buildTools } from "@/lib/astra/tools.server";
 import { z } from "zod";
 import type { Database, Json } from "@/integrations/supabase/types";
-import { resolveProvider } from "@/lib/astra/provider.server";
+import { hostedFallback, resolveProvider } from "@/lib/astra/provider.server";
 
 const Body = z.object({
   threadId: z.string().uuid(),
@@ -80,7 +80,8 @@ export const Route = createFileRoute("/api/chat")({
           if (pk) override = { baseUrl: pk.base_url, ...(pk.api_key ? { apiKey: pk.api_key } : {}) };
         }
         const builtin = model.provider === "builtin";
-        const resolved = builtin ? null : resolveProvider(model, override);
+        const resolved = builtin ? null : model.provider === "lovable" ? hostedFallback() : resolveProvider(model, override);
+        if (!builtin && !resolved) return json(503, { error: `${model.display_name} isn't connected: the hosted AI key is missing.` });
         if (resolved && !resolved.ok) return json(503, { error: `${model.display_name} isn't connected: ${resolved.reason}` });
 
         const { data: level } = await supabase.from("reasoning_levels").select("*").eq("id", reasoning).maybeSingle();
