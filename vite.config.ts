@@ -13,5 +13,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  vite: { plugins: [liveVoiceDev()] },
+  vite: {
+    plugins: [liveVoiceDev()],
+    // Pre-bundle the on-device voice libraries at startup so their lazy import
+    // never triggers a mid-session re-optimize (which breaks the module fetch).
+    optimizeDeps: { include: ["@huggingface/transformers", "kokoro-js"] },
+  },
 });
