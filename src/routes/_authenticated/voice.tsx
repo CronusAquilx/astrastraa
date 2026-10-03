@@ -25,7 +25,7 @@ function VoicePage() {
     onEvent(event: LiveEvent) {
       if (event.type === "session.input_transcript.delta" || event.type === "session.output_transcript.delta") {
         const role = event.type === "session.input_transcript.delta" ? "user" : "assistant";
-        const delta = typeof event.delta === "string" ? event.delta : "";
+        const delta = typeof event["delta"] === "string" ? (event["delta"] as string) : "";
         if (!delta.trim()) return;
         setLines((prev) => {
           const last = prev[prev.length - 1];
