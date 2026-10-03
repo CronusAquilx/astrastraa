@@ -15,6 +15,13 @@
       "when": 1791053432636,
       "tag": "0001_astra_initial_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791053472647,
+      "tag": "0002_astra_images_policies",
+      "breakpoints": true
     }
   ]
 }
