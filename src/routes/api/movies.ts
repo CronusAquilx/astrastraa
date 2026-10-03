@@ -62,7 +62,10 @@ function rewriteHtml(html: string, base: string, self: string, token: string): s
 
   let out = html
     .replace(/(\s(?:src|href|action|poster)\s*=\s*)(["'])([^"']+)\2/gi, (m, attr, q, u) => `${attr}${q}${prox(u)}${q}`)
-    .replace(/url\(\s*(["']?)([^)"']+)\1\s*\)/gi, (m, q, u) => (/^(data:|blob:)/i.test(u.trim()) ? m : `url(${q}${prox(u)}${q})`);
+    .replace(/url\(\s*(["']?)([^)"']+)\1\s*\)/gi, (m, q, u) => {
+      const t = String(u).trim();
+      return /^(data:|blob:)/i.test(t) ? m : `url(${q}${prox(u)}${q})`;
+    });
 
   const inject = `<script>(function(){var P=${JSON.stringify(self)}+"?embed=",T=${JSON.stringify(token)},B=${JSON.stringify(base)};` +
     `function w(u){try{if(typeof u!=="string")return u;if(/^(data:|blob:|javascript:|about:)/i.test(u))return u;var a=new URL(u,B).toString();if(a.indexOf(P)===0)return a;return P+encodeURIComponent(a)+"&token="+encodeURIComponent(T);}catch(e){return u;}}` +
